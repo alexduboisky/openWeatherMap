@@ -3,7 +3,9 @@ document.addEventListener('DOMContentLoaded',function(){
     const API_KEY = '84d6ecb8cce7742b9bed2b6595991fb7';
     async function getCurrentLocation(){
         return new Promise((res, rej) => {
-            navigator.geolocation.getCurrentPosition(res, rej);
+            navigator.geolocation.getCurrentPosition(res, rej=>{
+                generateError(rej.message);
+            });
         });
         
     }
@@ -107,6 +109,13 @@ document.addEventListener('DOMContentLoaded',function(){
                             <div><img src="http://openweathermap.org/img/wn/${icon}@2x.png"></div>
                             <div>${temp} ℃</div>`
         return dayDiv
+    }
+
+    function generateError(message){
+        document.body.style.textAlign = 'center';
+        document.body.style.fontSize = 'xx-large'
+        document.body.style.lineHeight = '100px'
+        document.body.innerHTML = `${message}`
     }
 
     createMarkup();
