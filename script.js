@@ -11,7 +11,8 @@ document.addEventListener('DOMContentLoaded', function () {
             south: 'South',
             south_west: 'South-West',
             west: 'West',
-            north_west: 'North-West'
+            north_west: 'North-West',
+            search: 'Search'
         },
         ru: {
             feels: 'Ощущается как',
@@ -22,7 +23,8 @@ document.addEventListener('DOMContentLoaded', function () {
             south: 'Юг',
             south_west: 'Юго-Запад',
             west: 'Запад',
-            north_west: 'Северо-Запад'
+            north_west: 'Северо-Запад',
+            search: 'Поиск'
         }
     }
 
@@ -91,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let searchDiv = document.createElement('div');
         searchDiv.innerHTML = `<form autocomplete="off">
                                     <div class="autocomplete" style="width:300px;">
-                                        <input id="searchInput" type="text" name="City" placeholder="Search...">
+                                        <input id="searchInput" type="text" name="City" placeholder="${lang[language].search}...">
                                     </div>
                                     <input type="submit">
                                 </form>`;
