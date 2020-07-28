@@ -1,7 +1,30 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    import * as i18next from './say.js';
-    import 'i18next';
+
+    let lang = {
+        en:{
+            feels: 'Feels like',
+            north: 'North',
+            north_east: 'North-East',
+            east: 'East',
+            south_east: 'South-East',
+            south : 'South',
+            south_west: 'South-West',
+            west: 'West',
+            north_west: 'North-West'
+        },
+        ru:{
+            feels: 'Ощущается как',
+            north: 'Север',
+            north_east: 'Северо-Восток',
+            east: 'Восток',
+            south_east: 'Юго-Восток',
+            south : 'Юг',
+            south_west: 'Юго-Запад',
+            west: 'Запад',
+            north_west: 'Северо-Запад'
+        }
+    }
 
     const API_KEY = '84d6ecb8cce7742b9bed2b6595991fb7';
 
@@ -26,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    async function getWeatherArrayWithCoords(language = 'en') {
+    async function getWeatherArrayWithCoords(language) {
         let weatherArray = [];
         let position = await getCurrentLocation();
         let responseWeather = await getResponse(`https://api.openweathermap.org/data/2.5/weather?lat=${position.coords.latitude}&lon=${position.coords.longitude}&units=metric&appid=${API_KEY}&lang=${language}`);
@@ -38,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return weatherArray;
     }
 
-    async function getWeatherArrayWithCity(city, language = 'en') {
+    async function getWeatherArrayWithCity(city, language) {
         let weatherArray = [];
         let responseWeather = await getResponse(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}&lang=${language}`);
         let weatherObject = await responseWeather.json();
@@ -50,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 
-    async function createMarkup(position, language, forecast = 'day') {
+    async function createMarkup(position, language = 'en', forecast = 'day') {
         let array;
         if (position === undefined) {
             array = await getWeatherArrayWithCoords(language);
@@ -79,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                   <button id="for5Days">For 5 Days</button>`
         wrapper.append(searchDiv,divForButton,divForLanguageButton);
         document.body.append(wrapper);
-        createCurrentWeatherDiv(array[0].name, array[0].sys.country, array[0].dt, array[0].main.temp, array[0].main.feels_like, array[0].weather[0].icon, array[0].wind.speed, array[0].wind.deg);
+        createCurrentWeatherDiv(array[0].name, array[0].sys.country, array[0].dt, array[0].main.temp, array[0].main.feels_like, array[0].weather[0].icon, array[0].wind.speed, array[0].wind.deg, language);
         if(forecast=='day'){
             createForecastDivForDay(array);
         }
@@ -92,12 +115,12 @@ document.addEventListener('DOMContentLoaded', function () {
         else{
             eventListenerForButton(position)
         }
-        eventListenerForLanguageButton();
+        eventListenerForLanguageButton(position);
         let searchForm = document.querySelector('form');
         searchForm.addEventListener('submit', (e) => {
             e.preventDefault();
             let val = document.querySelector('#searchInput').value;
-            createMarkup(val);
+            createMarkup(val, localStorage.getItem('lang'));
         })
     }
 
@@ -105,25 +128,27 @@ document.addEventListener('DOMContentLoaded', function () {
         let forecastForADayButton = document.querySelector('#forDay');
         let forecastFor5DaysButton = document.querySelector('#for5Days');
         forecastForADayButton.addEventListener('click',()=>{
-            createMarkup(value,undefined,'day');
+            createMarkup(value,localStorage.getItem('lang'),'day');
         })
         forecastFor5DaysButton.addEventListener('click',()=>{
-            createMarkup(value,undefined,'5 days');
+            createMarkup(value,localStorage.getItem('lang'),'5 days');
         })
     }
 
-    function eventListenerForLanguageButton(){
+    function eventListenerForLanguageButton(value = undefined){
         let ruButton = document.querySelector('#ru');
         let enButton = document.querySelector('#en');
         ruButton.addEventListener('click',()=>{
-            createMarkup(undefined,'ru',undefined);
+            createMarkup(value,'ru',undefined);
+            localStorage.setItem('lang','ru');
         })
         enButton.addEventListener('click',()=>{
-            createMarkup(undefined,'en',undefined);
+            createMarkup(value,'en',undefined);
+            localStorage.setItem('lang','en');
         })
     }
 
-    function createCurrentWeatherDiv(city, country, time, temp, feelLike, icon, windSpeed, direction) {
+    function createCurrentWeatherDiv(city, country, time, temp, feelLike, icon, windSpeed, direction, language) {
         let dt;
         dt = new Date(time * 1000)
         let div = document.createElement('div');
@@ -132,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <div class="weather_time"><i class="far fa-clock"></i> ${dt.toLocaleTimeString().slice(0, 5)}</div>
                             <div class="weather_icon"><img id="weather_icon" src="http://openweathermap.org/img/wn/${icon}@2x.png"></div>
                             <div class="weather_temp">${Math.round(temp)} ℃</div>
-                            <div class="weather_feels">Feels like ${Math.round(feelLike)} ℃</div>
+                            <div class="weather_feels">${lang[language].feels} ${Math.round(feelLike)} ℃</div>
                             <div class="weather_wind">
                                 <div class="weather_wind__direction"></div>
                                 <div class="weather_wind__speed"><i class="fas fa-wind"></i> ${windSpeed} m/s</div>
@@ -143,31 +168,31 @@ document.addEventListener('DOMContentLoaded', function () {
         let weatherWindDirection = document.querySelector('.weather_wind__direction');
         switch (true) {
             case (direction >= 337.6 && direction <= 360):
-                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> North`;
+                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> ${lang[language].north}`;
                 break;
             case (direction >= 0 && direction <= 22.5):
-                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> North`;
+                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> ${lang[language].north}`;
                 break;
             case (direction >= 22.6 && direction <= 67.5):
-                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> North-East`;
+                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> ${lang[language].north_east}`;
                 break;
             case (direction >= 67.6 && direction <= 112.5):
-                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> East`;
+                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> ${lang[language].east}`;
                 break;
             case (direction >= 112.6 && direction <= 157.5):
-                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> South-East`;
+                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> ${lang[language].south_east}`;
                 break;
             case (direction >= 157.6 && direction <= 202.5):
-                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> South`;
+                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> ${lang[language].south}`;
                 break;
             case (direction >= 202.6 && direction <= 247.5):
-                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> South-West`;
+                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> ${lang[language].south_west}`;
                 break;
             case (direction >= 247.6 && direction <= 292.5):
-                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> West`;
+                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> ${lang[language].west}`;
                 break;
             case (direction >= 292.6 && direction <= 337.5):
-                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> North-West`;
+                weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> ${lang[language].north_west}`;
                 break;
             default:
                 weatherWindDirection.innerHTML = `<i class="far fa-compass"></i> Unknown`;
@@ -214,6 +239,11 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.innerHTML = `${message}`
     }
 
-    createMarkup();
+    if(localStorage.getItem('lang')==='ru'){
+        createMarkup(undefined,'ru');
+    }
+    else{
+        createMarkup();
+    }
 
 })
