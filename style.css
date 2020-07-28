@@ -380,7 +380,7 @@ input[type=submit] {
     color: #ffffff;
 }
 
-#divForButton > button {
+#divForButton>button {
     text-decoration: none;
     outline: none;
     display: inline-block;
@@ -400,17 +400,17 @@ input[type=submit] {
 }
 
 
-#divForForm{
+#divForForm {
     text-align: center;
 }
 
-#divForLanguageButton{
+#divForLanguageButton {
     position: absolute;
     top: 20px;
     right: 20px;
 }
 
-#divForLanguageButton > button{
+#divForLanguageButton>button {
     text-decoration: none;
     outline: none;
     width: 35px;

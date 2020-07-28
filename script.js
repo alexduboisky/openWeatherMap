@@ -2,24 +2,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     let lang = {
-        en:{
+        en: {
             feels: 'Feels like',
             north: 'North',
             north_east: 'North-East',
             east: 'East',
             south_east: 'South-East',
-            south : 'South',
+            south: 'South',
             south_west: 'South-West',
             west: 'West',
             north_west: 'North-West'
         },
-        ru:{
+        ru: {
             feels: 'Ощущается как',
             north: 'Север',
             north_east: 'Северо-Восток',
             east: 'Восток',
             south_east: 'Юго-Восток',
-            south : 'Юг',
+            south: 'Юг',
             south_west: 'Юго-Запад',
             west: 'Запад',
             north_west: 'Северо-Запад'
@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let wrapper = document.createElement('div');
         wrapper.classList.add('wrapper');
         let divForLanguageButton = document.createElement('div');
-        divForLanguageButton.setAttribute('id','divForLanguageButton');
+        divForLanguageButton.setAttribute('id', 'divForLanguageButton');
         divForLanguageButton.innerHTML = `<button id="ru">RU</button>
                                           <button id="en">EN</button>`;
         let searchDiv = document.createElement('div');
@@ -95,24 +95,22 @@ document.addEventListener('DOMContentLoaded', function () {
                                     </div>
                                     <input type="submit">
                                 </form>`;
-        searchDiv.setAttribute('id','divForForm');
+        searchDiv.setAttribute('id', 'divForForm');
         let divForButton = document.createElement('div');
-        divForButton.setAttribute('id','divForButton');
+        divForButton.setAttribute('id', 'divForButton');
         divForButton.innerHTML = `<button id="forDay">For a day</button>
                                   <button id="for5Days">For 5 Days</button>`
-        wrapper.append(searchDiv,divForButton,divForLanguageButton);
+        wrapper.append(searchDiv, divForButton, divForLanguageButton);
         document.body.append(wrapper);
         createCurrentWeatherDiv(array[0].name, array[0].sys.country, array[0].dt, array[0].main.temp, array[0].main.feels_like, array[0].weather[0].icon, array[0].wind.speed, array[0].wind.deg, language);
-        if(forecast=='day'){
+        if (forecast == 'day') {
             createForecastDivForDay(array);
-        }
-        else{
+        } else {
             createForecastDivFor5Days(array);
         }
-        if(position===undefined){
+        if (position === undefined) {
             eventListenerForButton();
-        }
-        else{
+        } else {
             eventListenerForButton(position)
         }
         eventListenerForLanguageButton(position);
@@ -124,27 +122,27 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     }
 
-    function eventListenerForButton(value = undefined){
+    function eventListenerForButton(value = undefined) {
         let forecastForADayButton = document.querySelector('#forDay');
         let forecastFor5DaysButton = document.querySelector('#for5Days');
-        forecastForADayButton.addEventListener('click',()=>{
-            createMarkup(value,localStorage.getItem('lang'),'day');
+        forecastForADayButton.addEventListener('click', () => {
+            createMarkup(value, localStorage.getItem('lang'), 'day');
         })
-        forecastFor5DaysButton.addEventListener('click',()=>{
-            createMarkup(value,localStorage.getItem('lang'),'5 days');
+        forecastFor5DaysButton.addEventListener('click', () => {
+            createMarkup(value, localStorage.getItem('lang'), '5 days');
         })
     }
 
-    function eventListenerForLanguageButton(value = undefined){
+    function eventListenerForLanguageButton(value = undefined) {
         let ruButton = document.querySelector('#ru');
         let enButton = document.querySelector('#en');
-        ruButton.addEventListener('click',()=>{
-            createMarkup(value,'ru',undefined);
-            localStorage.setItem('lang','ru');
+        ruButton.addEventListener('click', () => {
+            createMarkup(value, 'ru', undefined);
+            localStorage.setItem('lang', 'ru');
         })
-        enButton.addEventListener('click',()=>{
-            createMarkup(value,'en',undefined);
-            localStorage.setItem('lang','en');
+        enButton.addEventListener('click', () => {
+            createMarkup(value, 'en', undefined);
+            localStorage.setItem('lang', 'en');
         })
     }
 
@@ -204,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let forecast = document.createElement('div');
         forecast.classList.add('forecast');
         dt = new Date(array[1].list[0].dt * 1000)
-        for (let i = 0; i < 5; i ++) {
+        for (let i = 0; i < 5; i++) {
             dt = new Date(array[1].list[i].dt * 1000)
             forecast.append(createDayDivForForecast(dt, array[1].list[i].weather[0].icon, Math.round(array[1].list[i].main['temp'])))
         }
@@ -239,10 +237,9 @@ document.addEventListener('DOMContentLoaded', function () {
         document.body.innerHTML = `${message}`
     }
 
-    if(localStorage.getItem('lang')==='ru'){
-        createMarkup(undefined,'ru');
-    }
-    else{
+    if (localStorage.getItem('lang') === 'ru') {
+        createMarkup(undefined, 'ru');
+    } else {
         createMarkup();
     }
 
