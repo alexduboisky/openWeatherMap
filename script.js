@@ -12,7 +12,10 @@ document.addEventListener('DOMContentLoaded', function () {
             south_west: 'South-West',
             west: 'West',
             north_west: 'North-West',
-            search: 'Search'
+            search: 'Search',
+            forADay:'For a day',
+            forTommorrow: 'For Tomorrow',
+            for5Days:'For 5 Days'
         },
         ru: {
             feels: 'Ощущается как',
@@ -24,7 +27,10 @@ document.addEventListener('DOMContentLoaded', function () {
             south_west: 'Юго-Запад',
             west: 'Запад',
             north_west: 'Северо-Запад',
-            search: 'Поиск'
+            search: 'Поиск',
+            forADay:'На сегодня',
+            forTommorrow: 'На завтра',
+            for5Days:'На 5 дней'
         }
     }
 
@@ -100,21 +106,31 @@ document.addEventListener('DOMContentLoaded', function () {
         searchDiv.setAttribute('id', 'divForForm');
         let divForButton = document.createElement('div');
         divForButton.setAttribute('id', 'divForButton');
-        divForButton.innerHTML = `<button id="forDay">For a day</button>
-                                  <button id="for5Days">For 5 Days</button>`
+        divForButton.innerHTML = `<button id="forDay">${lang[language].forADay}</button>
+                                  <button id="forTomorrow">${lang[language].forTommorrow}</button>
+                                  <button id="for5Days">${lang[language].for5Days}</button>`
         wrapper.append(searchDiv, divForButton, divForLanguageButton);
         document.body.append(wrapper);
-        createCurrentWeatherDiv(array[0].name, array[0].sys.country, array[0].dt, array[0].main.temp, array[0].main.feels_like, array[0].weather[0].icon, array[0].wind.speed, array[0].wind.deg, language);
+        createCurrentWeatherDiv(array[0].name, array[0].sys.country, array[0].dt, array[0].main.temp, array[0].main.feels_like, array[0].weather[0].icon, array[0].weather[0].description, array[0].wind.speed, array[0].wind.deg, language);
         if (forecast == 'day') {
+            let forecastForADayButton = document.querySelector('#forDay');
+            forecastForADayButton.classList.add('active-forecast');
             createForecastDivForDay(array);
-        } else {
-            createForecastDivFor5Days(array);
+        }else if(forecast == 'tomorrow'){
+            let forecastForTomorrowButton = document.querySelector('#forTomorrow');
+            forecastForTomorrowButton.classList.add('active-forecast');
+            createForecastDivForTommorow(array);
         }
+         else {
+            let forecastFor5DaysButton = document.querySelector('#for5Days');
+            forecastFor5DaysButton.classList.add('active-forecast');
+            createForecastDivFor5Days(array);
+        };
         if (position === undefined) {
             eventListenerForButton();
         } else {
             eventListenerForButton(position)
-        }
+        };
         eventListenerForLanguageButton(position);
         let searchForm = document.querySelector('form');
         searchForm.addEventListener('submit', (e) => {
@@ -126,11 +142,22 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function eventListenerForButton(value = undefined) {
         let forecastForADayButton = document.querySelector('#forDay');
+        let forecastForTomorrowButton = document.querySelector('#forTomorrow');
         let forecastFor5DaysButton = document.querySelector('#for5Days');
         forecastForADayButton.addEventListener('click', () => {
+            let activeButton = document.querySelector('.active-forecast');
+            activeButton.classList.remove('active-forecast');
             createMarkup(value, localStorage.getItem('lang'), 'day');
-        })
+            //forecastForADayButton.classList.add('active-forecast');
+        });
+        forecastForTomorrowButton.addEventListener('click', () => {
+            let activeButton = document.querySelector('.active-forecast');
+            activeButton.classList.remove('active-forecast');
+            createMarkup(value, localStorage.getItem('lang'), 'tomorrow');
+        });
         forecastFor5DaysButton.addEventListener('click', () => {
+            let activeButton = document.querySelector('.active-forecast');
+            activeButton.classList.remove('active-forecast');
             createMarkup(value, localStorage.getItem('lang'), '5 days');
         })
     }
@@ -148,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     }
 
-    function createCurrentWeatherDiv(city, country, time, temp, feelLike, icon, windSpeed, direction, language) {
+    function createCurrentWeatherDiv(city, country, time, temp, feelLike, icon, description, windSpeed, direction, language) {
         let dt;
         dt = new Date(time * 1000)
         let div = document.createElement('div');
@@ -156,6 +183,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             <div class="weather_city">${city}, ${country}</div>
                             <div class="weather_time"><i class="far fa-clock"></i> ${dt.toLocaleTimeString().slice(0, 5)}</div>
                             <div class="weather_icon"><img id="weather_icon" src="http://openweathermap.org/img/wn/${icon}@2x.png"></div>
+                            <div class="weather_description">${description}</div>
                             <div class="weather_temp">${Math.round(temp)} ℃</div>
                             <div class="weather_feels">${lang[language].feels} ${Math.round(feelLike)} ℃</div>
                             <div class="weather_wind">
@@ -206,7 +234,19 @@ document.addEventListener('DOMContentLoaded', function () {
         dt = new Date(array[1].list[0].dt * 1000)
         for (let i = 0; i < 5; i++) {
             dt = new Date(array[1].list[i].dt * 1000)
-            forecast.append(createDayDivForForecast(dt, array[1].list[i].weather[0].icon, Math.round(array[1].list[i].main['temp'])))
+            forecast.append(createDayDivForForecast(dt, array[1].list[i].weather[0].icon, array[1].list[i].weather[0].description, Math.round(array[1].list[i].main['temp'])))
+        }
+        let wrapper = document.querySelector('.wrapper');
+        wrapper.append(forecast);
+    }
+
+    function createForecastDivForTommorow(array) {
+        let forecast = document.createElement('div');
+        forecast.classList.add('forecast');
+        dt = new Date(array[1].list[0].dt * 1000)
+        for (let i = 5; i < 10; i++) {
+            dt = new Date(array[1].list[i].dt * 1000)
+            forecast.append(createDayDivForForecast(dt, array[1].list[i].weather[0].icon, array[1].list[i].weather[0].description, Math.round(array[1].list[i].main['temp'])))
         }
         let wrapper = document.querySelector('.wrapper');
         wrapper.append(forecast);
@@ -218,16 +258,17 @@ document.addEventListener('DOMContentLoaded', function () {
         dt = new Date(array[1].list[0].dt * 1000)
         for (let i = 0; i < Object.keys(array[1].list).length; i += 8) {
             dt = new Date(array[1].list[i].dt * 1000)
-            forecast.append(createDayDivForForecast(dt, array[1].list[i].weather[0].icon, Math.round(array[1].list[i].main['temp'])))
+            forecast.append(createDayDivForForecast(dt, array[1].list[i].weather[0].icon, array[1].list[i].weather[0].description, Math.round(array[1].list[i].main['temp'])))
         }
         let wrapper = document.querySelector('.wrapper');
         wrapper.append(forecast);
     }
 
-    function createDayDivForForecast(date, icon, temp) {
+    function createDayDivForForecast(date, icon, description,temp) {
         let dayDiv = document.createElement('div');
         dayDiv.innerHTML = `<div>${date.toLocaleDateString().slice(0,5)}</br>${date.toLocaleTimeString().slice(0,5)}</div>
                             <div><img src="http://openweathermap.org/img/wn/${icon}@2x.png"></div>
+                            <div class="forecast-description">${description}</div>
                             <div>${temp} ℃</div>`
         return dayDiv
     }

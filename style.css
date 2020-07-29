@@ -273,7 +273,7 @@ body {
     justify-content: center;
     margin-top: 10%;
     justify-content: center;
-    height: 300px;
+    height: 350px;
     width: 230px;
     background-color: #FFFFFF;
     border-radius: 25px;
@@ -283,6 +283,16 @@ body {
 
     font-size: larger;
     margin-bottom: 10px;
+}
+
+.current_weather .weather_description {
+    text-align: center;
+    font-size: medium;
+    margin-bottom: 10px;
+}
+
+.weather_description::first-letter{
+    text-transform: uppercase;
 }
 
 .current_weather .weather_temp {
@@ -308,6 +318,7 @@ body {
     display: flex;
     flex-wrap: wrap;
     width: 100%;
+    margin-top: 50px;
     margin-bottom: 10px;
     align-items: center;
     justify-content: center;
@@ -318,11 +329,20 @@ body {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    width: 40%;
+    min-width: 270px;
+    max-width: 500px;
     margin: 15px;
     padding: 0 10px;
     background-color: #FFFFFF;
     border-radius: 25px;
+}
+
+.forecast-description{
+    margin-right: 10px;
+}
+
+.forecast-description::first-letter{
+    text-transform: uppercase;
 }
 
 form {
@@ -380,6 +400,13 @@ input[type=submit] {
     color: #ffffff;
 }
 
+#divForButton{
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
 #divForButton>button {
     text-decoration: none;
     outline: none;
@@ -387,15 +414,14 @@ input[type=submit] {
     width: 140px;
     height: 45px;
     line-height: 10px;
-    border-radius: 45px;
+    border: none;
     margin: 10px 20px;
     font-size: 13px;
     text-transform: uppercase;
     text-align: center;
-    letter-spacing: 3px;
     font-weight: 600;
-    color: #000;
-    background: white;
+    background-color: DodgerBlue;
+    color: #fff;
     cursor: pointer;
 }
 
@@ -413,7 +439,32 @@ input[type=submit] {
 #divForLanguageButton>button {
     text-decoration: none;
     outline: none;
-    width: 35px;
-    height: 20px;
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    line-height: 10px;
+    border: none;
+    margin: 10px 5px;
+    font-size: 13px;
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: 600;
+    background-color: DodgerBlue;
+    color: #fff;
     cursor: pointer;
 }
+
+.active-forecast, .active-lang{
+    background-color: rgb(179, 217, 255) !important;
+}
+
+@media (max-width: 750px) { 
+    #divForLanguageButton {
+        position: relative;
+        display: flex;
+        text-align: center;
+        justify-content: center;
+        width: 100%;
+        margin-left: 60px;
+    }
+ }
